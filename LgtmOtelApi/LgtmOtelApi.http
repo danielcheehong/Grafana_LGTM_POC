@@ -1,0 +1,6 @@
+@LgtmOtelApi_HostAddress = http://localhost:5294
+
+GET {{LgtmOtelApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

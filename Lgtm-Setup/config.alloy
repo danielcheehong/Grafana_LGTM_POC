@@ -1,0 +1,47 @@
+// Accept OTLP over gRPC and HTTP
+otelcol.receiver.otlp "ingest" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    logs = [otelcol.processor.attributes.to_loki_labels.input]
+  }
+}
+
+// Tell Alloy which attributes to convert to Loki labels (hints)
+otelcol.processor.attributes "to_loki_labels" {
+  // Turn some resource attributes into Loki labels
+  action {
+    key    = "loki.resource.labels"
+    action = "insert"
+    value  = "service.name, deployment.environment, region"
+  }
+
+  // And a couple of log attributes (if present) into labels too
+  action {
+    key    = "loki.attribute.labels"
+    action = "insert"
+    value  = "logger.name"
+  }
+
+  output {
+    logs = [otelcol.exporter.loki.to_loki.input]
+  }
+}
+
+// Convert OTLP logs → Loki entries and forward to loki.write
+otelcol.exporter.loki "to_loki" {
+  forward_to = [loki.write.local.receiver]
+}
+
+// Push to Loki
+loki.write "local" {
+  endpoint {
+    // For Alloy, either "http://loki:3100" or full push path works
+    url = "http://loki:3100"
+  }
+}
