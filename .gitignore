@@ -1,0 +1,112 @@
+# --- .NET build outputs ---
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / VS Code
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.cache
+*.log
+*.deps.json
+*.runtimeconfig.json
+*.staticwebassets.*
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+# Lock / restore artifacts generated locally
+project.lock.json
+# Prevent committing global packages cache
+~/.nuget/
+
+# OS files
+[Dd]esktop.ini
+[Tt]humbs.db
+*.DS_Store
+
+# Logs & coverage
+logs/
+coverage/
+coverage*.json
+coverage*.xml
+lcov.info
+TestResults/
+
+# Docker / containers
+**/docker-data/
+**/tmp/
+
+# Grafana / Loki / Tempo runtime data (ensure volumes instead if needed)
+**/lgtm-data/
+**/grafana/data/
+**/grafana/plugins/
+**/grafana/logs/
+**/loki/chunks/
+**/loki/rules/
+**/tempo/traces/
+**/tempo/generator/
+
+# Tooling output
+*.swp
+*.tmp
+*.bak
+
+# Node / front-end (if added later)
+node_modules/
+*.tsbuildinfo
+
+# dotenv / secrets (adjust if you add real secrets)
+.env
+.env.*
+!env.template
+
+# Generated files
+*.g.cs
+*.generated.cs
+
+# Ignore local compose override
+/docker-compose.override.yml
+
+# Local certificates
+*.pfx
+*.p12
+
+# JetBrains caches
+.gradle/
+
+# macOS metadata
+.AppleDouble
+.Spotlight-V100
+.fseventsd
+
+# Windows dumps
+*.dmp
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# TFS
+$tf/
+
+# Backup config
+*.orig
+*.rej
+
+# Temporary lock
+*.lock

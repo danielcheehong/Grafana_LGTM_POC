@@ -398,6 +398,41 @@
           }
         }
       },
+      "OpenTelemetry.Instrumentation.AspNetCore/1.0.0-rc9.13": {
+        "type": "package",
+        "dependencies": {
+          "OpenTelemetry": "1.4.0-rc.4"
+        },
+        "compile": {
+          "lib/net7.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "OpenTelemetry.Instrumentation.Http/1.0.0-rc9.13": {
+        "type": "package",
+        "dependencies": {
+          "OpenTelemetry": "1.4.0-rc.4"
+        },
+        "compile": {
+          "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.Diagnostics.DiagnosticSource/9.0.0": {
         "type": "package",
         "compile": {
@@ -1087,6 +1122,42 @@
         "opentelemetry.extensions.hosting.nuspec"
       ]
     },
+    "OpenTelemetry.Instrumentation.AspNetCore/1.0.0-rc9.13": {
+      "sha512": "Ho57T9oaMss67u7U3xqEP6FevFSNK4JRxBxQRkDwI5IrPela9JwDaj4zsgHgeg6GpgsO98BoBeCapHswvmmuuw==",
+      "type": "package",
+      "path": "opentelemetry.instrumentation.aspnetcore/1.0.0-rc9.13",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
+        "lib/net6.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
+        "lib/net7.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
+        "lib/net7.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
+        "lib/netstandard2.1/OpenTelemetry.Instrumentation.AspNetCore.dll",
+        "lib/netstandard2.1/OpenTelemetry.Instrumentation.AspNetCore.xml",
+        "opentelemetry-icon-color.png",
+        "opentelemetry.instrumentation.aspnetcore.1.0.0-rc9.13.nupkg.sha512",
+        "opentelemetry.instrumentation.aspnetcore.nuspec"
+      ]
+    },
+    "OpenTelemetry.Instrumentation.Http/1.0.0-rc9.13": {
+      "sha512": "z698A+Gmty+dhjcbe88EiJOsVkX8HAygN0qDKTNtNyFS7Gqutv5zjiqfUIJ34oR1xKW34NgbW4GsikBwMJxqwg==",
+      "type": "package",
+      "path": "opentelemetry.instrumentation.http/1.0.0-rc9.13",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net462/OpenTelemetry.Instrumentation.Http.dll",
+        "lib/net462/OpenTelemetry.Instrumentation.Http.xml",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.dll",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.xml",
+        "opentelemetry-icon-color.png",
+        "opentelemetry.instrumentation.http.1.0.0-rc9.13.nupkg.sha512",
+        "opentelemetry.instrumentation.http.nuspec"
+      ]
+    },
     "System.Diagnostics.DiagnosticSource/9.0.0": {
       "sha512": "ddppcFpnbohLWdYKr/ZeLZHmmI+DXFgZ3Snq+/E7SwcdW4UnvxmaugkwGywvGVWkHPGCSZjCP+MLzu23AL5SDw==",
       "type": "package",
@@ -1124,27 +1195,29 @@
     "net9.0": [
       "Microsoft.AspNetCore.OpenApi >= 9.0.2",
       "OpenTelemetry.Exporter.OpenTelemetryProtocol >= 1.12.0",
-      "OpenTelemetry.Extensions.Hosting >= 1.12.0"
+      "OpenTelemetry.Extensions.Hosting >= 1.12.0",
+      "OpenTelemetry.Instrumentation.AspNetCore >= 1.0.0-rc9.13",
+      "OpenTelemetry.Instrumentation.Http >= 1.0.0-rc9.13"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\danie\\.nuget\\packages\\": {},
+    "C:\\Users\\hglo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
+      "projectUniqueName": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
       "projectName": "LgtmOtelApi",
-      "projectPath": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
-      "packagesPath": "C:\\Users\\danie\\.nuget\\packages\\",
-      "outputPath": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\obj\\",
+      "projectPath": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
+      "packagesPath": "C:\\Users\\hglo\\.nuget\\packages\\",
+      "outputPath": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\danie\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\hglo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1172,7 +1245,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -1189,6 +1262,14 @@
           "OpenTelemetry.Extensions.Hosting": {
             "target": "Package",
             "version": "[1.12.0, )"
+          },
+          "OpenTelemetry.Instrumentation.AspNetCore": {
+            "target": "Package",
+            "version": "[1.0.0-rc9.13, )"
+          },
+          "OpenTelemetry.Instrumentation.Http": {
+            "target": "Package",
+            "version": "[1.0.0-rc9.13, )"
           }
         },
         "imports": [
@@ -1210,8 +1291,30 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'OpenTelemetry.Instrumentation.AspNetCore' 1.0.0-rc9.13 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f",
+      "libraryId": "OpenTelemetry.Instrumentation.AspNetCore",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'OpenTelemetry.Instrumentation.Http' 1.0.0-rc9.13 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f",
+      "libraryId": "OpenTelemetry.Instrumentation.Http",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }
