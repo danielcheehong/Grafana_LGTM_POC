@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LgtmOtelApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4195944c72e921933fda6ba321e89809fa250f44")]
 [assembly: System.Reflection.AssemblyProductAttribute("LgtmOtelApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LgtmOtelApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
