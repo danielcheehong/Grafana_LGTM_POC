@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj": {}
+    "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj": {}
   },
   "projects": {
-    "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj": {
+    "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
+        "projectUniqueName": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
         "projectName": "LgtmOtelApi",
-        "projectPath": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
-        "packagesPath": "C:\\Users\\danie\\.nuget\\packages\\",
-        "outputPath": "C:\\Project\\Grafana_LGTM_POC\\LgtmOtelApi\\obj\\",
+        "projectPath": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\LgtmOtelApi.csproj",
+        "packagesPath": "C:\\Users\\hglo\\.nuget\\packages\\",
+        "outputPath": "C:\\Source\\Grafana_LGTM_POC\\LgtmOtelApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\danie\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\hglo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -62,6 +62,14 @@
             "OpenTelemetry.Extensions.Hosting": {
               "target": "Package",
               "version": "[1.12.0, )"
+            },
+            "OpenTelemetry.Instrumentation.AspNetCore": {
+              "target": "Package",
+              "version": "[1.0.0-rc9.13, )"
+            },
+            "OpenTelemetry.Instrumentation.Http": {
+              "target": "Package",
+              "version": "[1.0.0-rc9.13, )"
             }
           },
           "imports": [
@@ -83,7 +91,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

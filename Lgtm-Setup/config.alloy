@@ -1,4 +1,4 @@
-// Accept OTLP over gRPC and HTTP
+// Accept OTLP over gRPC and HTTP (logs + traces)
 otelcol.receiver.otlp "ingest" {
   grpc {
     endpoint = "0.0.0.0:4317"
@@ -8,7 +8,8 @@ otelcol.receiver.otlp "ingest" {
   }
 
   output {
-    logs = [otelcol.processor.attributes.to_loki_labels.input]
+    logs   = [otelcol.processor.attributes.to_loki_labels.input]
+    traces = [otelcol.exporter.otlp.tempo.input]
   }
 }
 
@@ -36,6 +37,14 @@ otelcol.processor.attributes "to_loki_labels" {
 // Convert OTLP logs → Loki entries and forward to loki.write
 otelcol.exporter.loki "to_loki" {
   forward_to = [loki.write.local.receiver]
+}
+
+// Export traces to Tempo (internal DNS name tempo)
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+  }
+  traces {}
 }
 
 // Push to Loki

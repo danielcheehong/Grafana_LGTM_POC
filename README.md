@@ -1,51 +1,72 @@
-# Grafana LGTM Stack POC
+# Grafana LGTM Stack POC (Logs + Traces)
 
-A proof of concept demonstrating how to integrate .NET applications with the Grafana LGTM (Loki, Grafana, Tempo, Mimir) observability stack using OpenTelemetry.
+A proof of concept demonstrating how to integrate a .NET 9 minimal API with the Grafana LGTM (Loki, Grafana, Tempo, Mimir*) observability stack using OpenTelemetry for **logs** and **distributed traces**.
 
-## 🏗️ Architecture Overview
+> *Mimir (metrics) is not yet included; future enhancement.
 
-This project showcases a complete observability pipeline:
+## 🏗️ Updated Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   .NET API      │    │     Alloy       │    │      Loki       │    │    Grafana      │
-│  (OpenTelemetry)│───▶│  (Collector)    │───▶│   (Log Store)   │───▶│ (Visualization) │
-│                 │    │                 │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-        │                        │                        │                        │
-        │                        │                        │                        │
-    Port 5294                 Port 4317/4318          Port 3100              Port 3000
-   (HTTP/HTTPS)                (OTLP gRPC/HTTP)       (Loki API)         (Grafana UI)
+┌─────────────────┐        OTLP (logs + traces)        ┌─────────────────┐
+│   .NET API      │ 4317/4318 (gRPC/HTTP)              │     Alloy       │
+│ (OpenTelemetry) │ ─────────────────────────────────▶ │ (Collector)     │
+│                 │                                     │                │
+└─────────────────┘                                     └──────┬─────────┘
+        │                                                   │
+        │ Logs (Loki exporter)                              │ Traces (OTLP gRPC)
+        ▼                                                   ▼
+     ┌──────────────┐                                   ┌─────────────────┐
+     │     Loki      │                                   │     Tempo       │
+     │ (Log Store)   │                                   │ (Trace Store)   │
+     └──────┬────────┘                                   └──────┬─────────┘
+        │                           Correlation (trace_id)   │
+        └──────────────────────┬─────────────────────────────┘
+               ▼
+             ┌───────────┐
+             │  Grafana  │
+             │ (Explore) │
+             └───────────┘
+
+Ports:
+API: 5294 (HTTP) / 7054 (HTTPS)
+Alloy: 4317 (OTLP gRPC), 4318 (OTLP HTTP)
+Loki: 3100
+Tempo: 3200
+Grafana: 3000
 ```
 
 ## 🚀 Components
 
 ### 1. LgtmOtelApi (.NET 9 Web API)
-- **Framework**: ASP.NET Core 9.0
-- **Purpose**: Sample API with OpenTelemetry integration
-- **Features**:
-  - Structured logging with OpenTelemetry
-  - OTLP (OpenTelemetry Protocol) export to Alloy
-  - Resource attribution (service name, environment, region)
-  - Sample endpoints for testing log generation
+Framework: ASP.NET Core 9.0
 
-### 2. Grafana Alloy (OpenTelemetry Collector)
-- **Purpose**: Receives telemetry data from applications and forwards to Loki
-- **Configuration**: `config.alloy`
-- **Features**:
-  - OTLP receiver (gRPC on port 4317, HTTP on port 4318)
-  - Attribute processing for Loki label conversion
-  - Log export to Loki
+Features:
+- Structured logging with OpenTelemetry
+- Distributed tracing (ASP.NET Core + HttpClient + manual spans)
+- Resource attribution: service.name, deployment.environment, region, version
+- Endpoints:
+   - `/ping` – emits INFO/WARN/ERROR logs
+   - `/trace` – creates a root span + child span and correlated logs (includes `trace_id=` in log lines)
 
-### 3. Loki (Log Aggregation)
-- **Version**: 3.1.1
-- **Purpose**: Stores and indexes log data
-- **Storage**: Local filesystem (development setup)
+### 2. Grafana Alloy (Collector)
+Config: `Lgtm-Setup/config.alloy`
 
-### 4. Grafana (Visualization)
-- **Version**: 11.1.4
-- **Purpose**: Dashboard and log exploration
-- **Default Credentials**: admin/admin
+Pipelines:
+- OTLP receiver (gRPC/HTTP)
+- Logs: attribute enrichment → Loki exporter
+- Traces: OTLP gRPC exporter to Tempo
+
+### 3. Loki (Logs)
+Stores structured logs with labels derived from OpenTelemetry resource + selected log attributes.
+
+### 4. Tempo (Traces)
+Config: `Lgtm-Setup/tempo-config.yaml` – local filesystem backend for spans (dev only).
+
+### 5. Grafana (Explore / Correlation)
+Datasource provisioning: `grafana/provisioning/datasources/datasources.yaml` automatically registers Loki + Tempo and enables:
+- Logs → Trace (derived field `traceID` via regex `trace_id=(\w+)`)
+- Trace → Logs (Traces to Logs mapping with common tags)
+- Service map & node graph (Tempo features)
 
 ## 📋 Prerequisites
 
@@ -55,157 +76,150 @@ This project showcases a complete observability pipeline:
 
 ## 🛠️ Quick Start
 
-### 1. Start the Observability Stack
-
 ```powershell
-# Navigate to the setup directory
+# 1. Start observability stack
 cd Lgtm-Setup
+docker compose up -d   # or: docker-compose up -d
 
-# Start all services
-docker-compose up -d
-```
-
-### 2. Run the .NET API
-
-```powershell
-# Navigate to the API directory
-cd LgtmOtelApi
-
-# Restore dependencies and run
+# 2. Run API
+cd ../LgtmOtelApi
 dotnet restore
 dotnet run
-```
 
-### 3. Generate Some Logs
-
-```powershell
-# Test the ping endpoint to generate logs
+# 3. Generate logs
 curl http://localhost:5294/ping
+
+# 4. Generate trace (returns traceId)
+curl http://localhost:5294/trace
 ```
 
-### 4. View Logs in Grafana
+Then open Grafana: http://localhost:3000 (admin / admin)
 
-1. Open Grafana: http://localhost:3000
-2. Login with `admin/admin`
-3. Navigate to "Explore" 
-4. Select "Loki" as the data source
-5. Query your logs with filters like: `{service_name="LokiOtelApi"}`
+Explore → Tempo: find recent trace (filter by Service = LokiOtelApi). From a span choose “View logs”.
+
+Explore → Loki: query `{service_name="LokiOtelApi"}` and click a `traceID` value to pivot to the trace.
 
 ## 🔧 Configuration Details
 
-### OpenTelemetry Configuration
+### OpenTelemetry (API)
+Resource attributes:
+- service.name = LokiOtelApi
+- service.version = 1.0.0
+- deployment.environment = dev
+- region = local
 
-The API is configured to send logs with the following resource attributes:
-- **Service Name**: `LokiOtelApi`
-- **Service Version**: `1.0.0`
-- **Environment**: `dev`
-- **Region**: `local`
+Tracing configuration:
+- ASP.NET Core & HttpClient instrumentation
+- Manual `ActivitySource("LokiOtelApi.TraceDemo")`
+- OTLP exporter (gRPC) → Alloy (`OpenTelemetry:Endpoint` configurable, default http://localhost:4317)
+
+Logging configuration:
+- Logs exported via OTLP gRPC to Alloy
+- Formatted message + scopes enabled
 
 ### Alloy Processing
+Labels derived:
+- Resource: service.name, deployment.environment, region
+- Log attribute: logger.name
 
-Alloy converts the following attributes to Loki labels:
-- **Resource Attributes**: `service.name`, `deployment.environment`, `region`
-- **Log Attributes**: `logger.name`
+Traces forwarded unchanged to Tempo via internal endpoint `tempo:4317`.
 
 ### Port Mapping
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| .NET API | 5294 (HTTP), 7054 (HTTPS) | Application endpoints |
-| Alloy | 4317 | OTLP gRPC receiver |
-| Alloy | 4318 | OTLP HTTP receiver |
-| Loki | 3100 | Loki API |
-| Grafana | 3000 | Web UI |
+| Service    | Port(s)              | Purpose                     |
+|------------|----------------------|-----------------------------|
+| .NET API   | 5294 (HTTP) / 7054   | Sample endpoints            |
+| Alloy      | 4317 (gRPC), 4318    | OTLP ingest (logs+traces)   |
+| Loki       | 3100                 | Log storage API             |
+| Tempo      | 3200                 | Trace query / ingest gRPC*  |
+| Grafana    | 3000                 | UI / Explore                |
 
-## 📊 Sample Queries
+*Traces sent to Tempo via gRPC exporter endpoint exposed internally on 4317 (default)
 
-### Grafana/Loki LogQL Examples
+## 📊 Sample Queries & Filters
 
+### LogQL (Loki)
 ```logql
-# All logs from the API
 {service_name="LokiOtelApi"}
-
-# Filter by log level
+{service_name="LokiOtelApi"} |= "trace_id"
 {service_name="LokiOtelApi"} |= "ERROR"
-
-# Filter by logger name
-{service_name="LokiOtelApi", logger_name="Demo"}
-
-# Count errors over time
 count_over_time({service_name="LokiOtelApi"} |= "ERROR" [5m])
 ```
 
-## 🗂️ Project Structure
+### Tempo Search Fields
+- Service: `LokiOtelApi`
+- Span name: `TraceEndpoint` or `ChildWork`
+- Attribute: `endpoint=/trace`
+
+## 🗂️ Project Structure (Updated)
 
 ```
 Grafana_LGTM_POC/
-├── Grafana_LGTM_POC.sln           # Solution file
-├── README.md                       # This file
-├── Lgtm-Setup/                    # Docker infrastructure
-│   ├── docker-compose.yml         # Services orchestration
-│   ├── config.alloy               # Alloy configuration
-│   └── loki-config.yaml           # Loki configuration
-└── LgtmOtelApi/                   # .NET Web API
-    ├── Program.cs                  # Application entry point
-    ├── LgtmOtelApi.csproj         # Project file
-    ├── appsettings.json           # Application configuration
-    ├── appsettings.Development.json
-    └── Properties/
-        └── launchSettings.json     # Launch profiles
+├── Grafana_LGTM_POC.sln
+├── README.md
+├── Lgtm-Setup/
+│   ├── docker-compose.yml
+│   ├── config.alloy
+│   ├── loki-config.yaml
+│   ├── tempo-config.yaml
+│   └── grafana/
+│       └── provisioning/datasources/datasources.yaml
+└── LgtmOtelApi/
+   ├── Program.cs
+   ├── LgtmOtelApi.csproj
+   ├── appsettings.json
+   ├── appsettings.Development.json
+   └── Properties/launchSettings.json
 ```
 
 ## 🔍 Troubleshooting
 
 ### Common Issues
 
-1. **Logs not appearing in Grafana**
-   - Verify all containers are running: `docker-compose ps`
-   - Check Alloy logs: `docker-compose logs alloy`
-   - Ensure the .NET API is sending to the correct endpoint
-
-2. **Connection refused errors**
-   - Make sure Docker services are fully started
-   - Check port conflicts with other running services
-
-3. **No data in Loki**
-   - Verify Loki configuration and storage permissions
-   - Check Alloy → Loki connectivity
+| Symptom | Action |
+|---------|--------|
+| Logs missing | `docker compose logs alloy` – verify OTLP exporter endpoint | 
+| Traces missing | Call `/trace`; check Alloy → Tempo exporter `tempo:4317` reachable |
+| No log↔trace pivot | Ensure log lines contain `trace_id=` and derived field regex unchanged |
+| Grafana shows no datasources | Confirm provisioning file is mounted (see compose volumes) |
+| Tempo empty after many calls | Time range too small – widen to 15m in Explore |
 
 ### Useful Commands
 
 ```powershell
 # View all container logs
-docker-compose logs
+docker compose logs
 
 # View specific service logs
-docker-compose logs grafana
-docker-compose logs loki
-docker-compose logs alloy
+docker compose logs grafana
+docker compose logs loki
+docker compose logs tempo
+docker compose logs alloy
 
-# Restart specific service
-docker-compose restart alloy
+# Restart a service
+docker compose restart alloy
 
 # Clean shutdown
-docker-compose down
+docker compose down
 ```
 
 ## 🚀 Next Steps
 
-This POC demonstrates the "L" (Loki) portion of the LGTM stack. To complete the observability picture, consider adding:
+Implemented: Loki (logs) + Tempo (traces). Upcoming ideas:
+1. Add metrics (Prometheus receiver → Mimir) with exemplars linking traces.
+2. Add custom dashboards (latency, error rate, log volume per service).
+3. Introduce downstream dependency call to demonstrate distributed trace propagation.
+4. Add semantic conventions (http.*, net.peer.*, exception.*) enrichment.
+5. Add alerting (Grafana Alerting or Loki/Tempo rules) for error rate & latency SLOs.
 
-1. **Tempo** for distributed tracing
-2. **Mimir** for metrics collection
-3. **Additional instrumentation** (HTTP requests, database calls, etc.)
-4. **Custom dashboards** in Grafana
-5. **Alerting rules** based on log patterns
+## 📚 References
 
-## 📚 Learn More
-
-- [Grafana Alloy Documentation](https://grafana.com/docs/alloy/)
-- [Loki Documentation](https://grafana.com/docs/loki/)
-- [OpenTelemetry .NET Documentation](https://opentelemetry.io/docs/languages/net/)
-- [Grafana Documentation](https://grafana.com/docs/grafana/)
+- Grafana Alloy: https://grafana.com/docs/alloy/
+- Grafana Loki: https://grafana.com/docs/loki/
+- Grafana Tempo: https://grafana.com/docs/tempo/
+- OpenTelemetry .NET: https://opentelemetry.io/docs/languages/net/
+- Grafana: https://grafana.com/docs/grafana/
 
 ## 📄 License
 
-This is a proof of concept project for demonstration purposes.
+Proof of concept for demonstration purposes.
