@@ -19,6 +19,16 @@ services:
     depends_on:
       - loki
 
+  mimir:
+    image: grafana/mimir:2.12.0
+    command: ["-config.file=/etc/mimir/mimir.yaml"]
+    ports:
+      - "9009:9009" # Mimir HTTP port
+    volumes:
+      - ./mimir-config.yaml:/etc/mimir/mimir.yaml:ro
+    depends_on:
+      - loki
+
   alloy:
     image: grafana/alloy:latest
     command: ["run", "/etc/alloy/config.alloy"]
@@ -30,6 +40,7 @@ services:
     depends_on:
       - loki
       - tempo
+      - mimir
 
   grafana:
     image: grafana/grafana:11.1.4
@@ -43,3 +54,4 @@ services:
       - loki
       - tempo
       - alloy
+      - mimir

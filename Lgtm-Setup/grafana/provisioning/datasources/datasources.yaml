@@ -29,3 +29,13 @@ datasources:
 				datasourceUid: Loki
 			nodeGraph:
 				enabled: true
+	- name: Mimir
+		type: prometheus
+		access: proxy
+		url: http://mimir:9009
+		isDefault: false
+		jsonData:
+			httpMethod: GET
+			exemplarTraceIdDestinations:
+				- name: traceID
+					datasourceUid: tempo

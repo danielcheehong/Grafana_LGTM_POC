@@ -1,4 +1,4 @@
-// Accept OTLP over gRPC and HTTP (logs + traces)
+// Accept OTLP over gRPC and HTTP (logs + traces + metrics)
 otelcol.receiver.otlp "ingest" {
   grpc {
     endpoint = "0.0.0.0:4317"
@@ -8,8 +8,9 @@ otelcol.receiver.otlp "ingest" {
   }
 
   output {
-    logs   = [otelcol.processor.attributes.to_loki_labels.input]
-    traces = [otelcol.exporter.otlp.tempo.input]
+    logs    = [otelcol.processor.attributes.to_loki_labels.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
+    metrics = [otelcol.exporter.prometheus.mimir.input]
   }
 }
 
@@ -52,5 +53,16 @@ loki.write "local" {
   endpoint {
     // For Alloy, either "http://loki:3100" or full push path works
     url = "http://loki:3100"
+  }
+}
+
+// Export metrics to Mimir via Prometheus remote write
+otelcol.exporter.prometheus "mimir" {
+  forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.remote_write "mimir" {
+  endpoint {
+    url = "http://mimir:9009/api/v1/push"
   }
 }
