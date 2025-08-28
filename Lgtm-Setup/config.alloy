@@ -45,7 +45,6 @@ otelcol.exporter.otlp "tempo" {
   client {
     endpoint = "tempo:4317"
   }
-  traces {}
 }
 
 // Push to Loki

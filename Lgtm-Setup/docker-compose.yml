@@ -3,29 +3,29 @@ version: "3.9"
 services:
   loki:
     image: grafana/loki:3.1.1
-    command: ["-config.file=/etc/loki/local-config.yaml"]
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
     ports:
       - "3100:3100"
     volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml:ro
 
   tempo:
     image: grafana/tempo:2.5.0
-    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    command: ["-config.file=/etc/tempo/tempo-config.yaml"]
     ports:
       - "3200:3200" # Tempo HTTP / query port
     volumes:
-      - ./tempo-config.yaml:/etc/tempo/tempo.yaml:ro
+      - ./tempo-config.yaml:/etc/tempo/tempo-config.yaml:ro
     depends_on:
       - loki
 
   mimir:
     image: grafana/mimir:2.12.0
-    command: ["-config.file=/etc/mimir/mimir.yaml"]
+    command: ["-config.file=/etc/mimir/mimir-config.yaml"]
     ports:
       - "9009:9009" # Mimir HTTP port
     volumes:
-      - ./mimir-config.yaml:/etc/mimir/mimir.yaml:ro
+      - ./mimir-config.yaml:/etc/mimir/mimir-config.yaml:ro
     depends_on:
       - loki
 

@@ -37,6 +37,3 @@ store_gateway:
 
 usage_stats:
   enabled: false
-
-analytics:
-  reporting_enabled: false
